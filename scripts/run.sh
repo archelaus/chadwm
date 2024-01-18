@@ -1,11 +1,12 @@
 #!/bin/sh
 
-setroot --restore
 # xmodmap ~/.Xmodmap
+setroot --restore
 xrdb merge ~/.config/x11/xresources
 
 dunst &
 greenclip daemon &
+sudo xremap ~/.config/xremap/config.yml &
 sxhkd &
 
 xidlehook --not-when-fullscreen --detect-sleep --not-when-audio \
@@ -28,7 +29,8 @@ workrave &
 ~/.local/share/virtualenvs/yt/bin/python ~/.local/src/youtube-local/server.py &
 # python -m http.server 7389 --directory ~/.local/src/_traichu/ &
 
-~/.local/src/chadwm/scripts/bar.sh &
+cd ~/.local/src/chadwm/scripts
+./bar.sh &
 
 while type chadwm >/dev/null; do
 	chadwm && continue || break
