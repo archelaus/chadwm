@@ -76,7 +76,7 @@ static const char *colors[][3]      = {
 
 /* tagging */
 /* static char *tags[] = {"", "", "", "", ""}; */
-static char *tags[] = {"", "", "", "󰙯", ""};
+static char *tags[] = {"", "", "", "󰙯", ""};
 
 /* static const char* eww[] = { "eww", "open" , "eww", NULL }; */
 static const char* rofi[] = { "launcher_t3", NULL };
@@ -96,14 +96,21 @@ static const unsigned int ulinevoffset  = 0; /* how far above the bottom of the 
 static const int ulineall               = 0; /* 1 to show underline on all tags, 0 for just the active ones */
 
 static const Rule rules[] = {
-    /* xprop(1):
-     *	WM_CLASS(STRING) = instance, class
-     *	WM_NAME(STRING) = title
-     */
-    /* class      instance    title       tags mask     iscentered   isfloating   monitor */
-    { "Gimp",     NULL,       NULL,       0,            0,           1,           -1 },
-    { "Firefox",  NULL,       NULL,       1 << 8,       0,           0,           -1 },
-    { "eww",      NULL,       NULL,       0,            0,           1,           -1 },
+    /* xprop(1): */
+    /*  * WM_CLASS(STRING) = instance, class */
+    /*  * WM_NAME(STRING) = title */
+    /* class             instance     title         tags mask   iscentered   isfloating   monitor */
+    { "64Gram",          NULL,        NULL,         1 << 4,     0,           0,           -1, },
+    { "ArmCord",         NULL,        NULL,         1 << 3,     0,           0,           -1, },
+    { "Brave-browser",   NULL,        NULL,         1 << 2,     0,           0,           -1, },
+    { "Spotify",         NULL,        NULL,         1 << 1,     0,           0,           -1, },
+    { "TelegramDesktop", NULL,        NULL,         1 << 4,     0,           0,           -1, },
+    { "eww",             NULL,        NULL,         0,          0,           1,           -1, },
+    { "firefox",         NULL,        NULL,         1 << 2,     0,           0,           -1, },
+    { "kitty",           "termFloat", NULL,         0,          1,           1,           -1, },
+    { "mpv",             "mpvFloat",  NULL,         0,          0,           1,           -1, },
+    { "obsidian",        NULL,        NULL,         1 << 1,     0,           0,           -1, },
+    { "ripdrag",         NULL,        NULL,         1 << 2,     0,           1,           -1, },
 };
 
 /* layout(s) */
@@ -147,6 +154,7 @@ static const Layout layouts[] = {
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
 /* commands */
+static const char *termcmd[]  = { "kitty", "-1", NULL };
 
 static const Key keys[] = {
     /* modifier                         key         function        argument */
@@ -164,8 +172,8 @@ static const Key keys[] = {
     /* { MODKEY,                            XK_u,       spawn, */
     /*     SHCMD("maim --select | xclip -selection clipboard -t image/png")}, */
 
-    { MODKEY,                           XK_c,       spawn,          SHCMD("rofi -show drun") },
-    { MODKEY,                           XK_Return,  spawn,            SHCMD("st")},
+    /* { MODKEY,                           XK_c,       spawn,          SHCMD("rofi -show drun") }, */
+    /* { MODKEY,                           XK_Return,  spawn,            SHCMD("st")}, */
 
     // toggle stuff
     { MODKEY,                           XK_b,       togglebar,      {0} },
@@ -183,7 +191,7 @@ static const Key keys[] = {
     { MODKEY,                           XK_Left,    shiftview,      {.i = -1 } },
     { MODKEY,                           XK_Right,   shiftview,      {.i = +1 } },
 
-    // change m,cfact sizes 
+    // change m,cfact sizes
     { MODKEY,                           XK_h,       setmfact,       {.f = -0.05} },
     { MODKEY,                           XK_l,       setmfact,       {.f = +0.05} },
     { MODKEY|ShiftMask,                 XK_h,       setcfact,       {.f = +0.25} },
@@ -208,7 +216,7 @@ static const Key keys[] = {
     { MODKEY|ControlMask,               XK_o,       incrogaps,      {.i = +1 } },
     { MODKEY|ControlMask|ShiftMask,     XK_o,       incrogaps,      {.i = -1 } },
 
-    // inner+outer hori, vert gaps 
+    // inner+outer hori, vert gaps
     { MODKEY|ControlMask,               XK_6,       incrihgaps,     {.i = +1 } },
     { MODKEY|ControlMask|ShiftMask,     XK_6,       incrihgaps,     {.i = -1 } },
     { MODKEY|ControlMask,               XK_7,       incrivgaps,     {.i = +1 } },
@@ -272,7 +280,8 @@ static const Button buttons[] = {
     { ClkLtSymbol,          0,              Button1,        setlayout,      {0} },
     { ClkLtSymbol,          0,              Button3,        setlayout,      {.v = &layouts[2]} },
     { ClkWinTitle,          0,              Button2,        zoom,           {0} },
-    { ClkStatusText,        0,              Button2,        spawn,          SHCMD("st") },
+    /* { ClkStatusText,        0,              Button2,        spawn,          SHCMD("st") }, */
+    { ClkStatusText,        0,              Button2,        spawn,          {.v = termcmd} },
 
     /* Keep movemouse? */
     /* { ClkClientWin,         MODKEY,         Button1,        movemouse,      {0} }, */
