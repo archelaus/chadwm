@@ -29,8 +29,7 @@ workrave &
 ~/.local/share/virtualenvs/yt/bin/python ~/.local/src/youtube-local/server.py &
 # python -m http.server 7389 --directory ~/.local/src/_traichu/ &
 
-cd ~/.local/src/chadwm/scripts
-./bar.sh &
+~/.local/src/chadwm/scripts/bar.sh &
 
 while type chadwm >/dev/null; do
 	chadwm && continue || break
