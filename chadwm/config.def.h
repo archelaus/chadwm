@@ -104,6 +104,7 @@ static const Rule rules[] = {
     { "ArmCord",         NULL,        NULL,         1 << 3,     0,           0,           -1, },
     { "Brave-browser",   NULL,        NULL,         1 << 2,     0,           0,           -1, },
     { "Spotify",         NULL,        NULL,         1 << 1,     0,           0,           -1, },
+    { "kitty",           NULL,        "Spotify",    1 << 1,     0,           0,           -1, },
     { "TelegramDesktop", NULL,        NULL,         1 << 4,     0,           0,           -1, },
     { "eww",             NULL,        NULL,         0,          0,           1,           -1, },
     { "firefox",         NULL,        NULL,         1 << 2,     0,           0,           -1, },
