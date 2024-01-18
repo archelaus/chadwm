@@ -104,11 +104,12 @@ static const Rule rules[] = {
     { "ArmCord",         NULL,        NULL,         1 << 3,     0,           0,           -1, },
     { "Brave-browser",   NULL,        NULL,         1 << 2,     0,           0,           -1, },
     { "Spotify",         NULL,        NULL,         1 << 1,     0,           0,           -1, },
-    { "kitty",           NULL,        "Spotify",    1 << 1,     0,           0,           -1, },
     { "TelegramDesktop", NULL,        NULL,         1 << 4,     0,           0,           -1, },
     { "eww",             NULL,        NULL,         0,          0,           1,           -1, },
     { "firefox",         NULL,        NULL,         1 << 2,     0,           0,           -1, },
     { "kitty",           "termFloat", NULL,         0,          1,           1,           -1, },
+    { "kitty",           NULL,        "Scratchpad", 0,          0,           1,           -1, },
+    { "kitty",           NULL,        "Spotify",    1 << 1,     0,           0,           -1, },
     { "mpv",             "mpvFloat",  NULL,         0,          0,           1,           -1, },
     { "obsidian",        NULL,        NULL,         1 << 1,     0,           0,           -1, },
     { "ripdrag",         NULL,        NULL,         1 << 2,     0,           1,           -1, },
@@ -156,6 +157,8 @@ static const Layout layouts[] = {
 
 /* commands */
 static const char *termcmd[]  = { "kitty", "-1", NULL };
+static const char scratchpadname[] = "Scratchpad";
+static const char *scratchpadcmd[] = { "kitty", "-T", "Scratchpad", "-o", "initial_window_width=80c", "-o", "initial_window_height=24c", NULL};
 
 static const Key keys[] = {
     /* modifier                         key         function        argument */
@@ -174,7 +177,8 @@ static const Key keys[] = {
     /*     SHCMD("maim --select | xclip -selection clipboard -t image/png")}, */
 
     /* { MODKEY,                           XK_c,       spawn,          SHCMD("rofi -show drun") }, */
-    /* { MODKEY,                           XK_Return,  spawn,            SHCMD("st")}, */
+    /* { MODKEY,                           XK_Return,  spawn,          SHCMD("st")}, */
+    { MODKEY,                           XK_grave,   togglescratch,  {.v = scratchpadcmd } },
 
     // toggle stuff
     { MODKEY,                           XK_b,       togglebar,      {0} },
