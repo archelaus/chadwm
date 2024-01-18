@@ -1,4 +1,4 @@
-#!/usr/bin/env dash
+#!/bin/sh
 
 # ^c$var^ = fg color
 # ^b$var^ = bg color
@@ -6,11 +6,12 @@
 printf '%s' "$$" >~/.cache/pidofbar
 sec=0
 
-# Load colors
+# load colors
+# shellcheck disable=SC1090
 . ~/.local/src/chadwm/scripts/bar_themes/gruvchad
 
 update_cpu() {
-	cpu_val=$(grep 'cpu ' /proc/stat | awk '{usage=($3+$4)*100/($2+$4+$5)} END {print usage}')
+	cpu_val=$(grep "cpu " /proc/stat | awk '{usage=($3+$4)*100/($2+$4+$5)} END{print usage}')
 	cpu=$(printf "^c$black^^b$green^ CPU ^c$white^^b$grey^ %.1f%%" "$cpu_val")
 }
 
@@ -69,7 +70,6 @@ update_record() {
 	[ -f /tmp/recordingpid ] && record=$(printf "^c$green^ %s" " ")
 }
 
-# FIX: Not tested
 update_spotify() {
 	if pgrep -x spotify >/dev/null; then
 		PLAYER="spotify"
@@ -92,25 +92,26 @@ update_spotify() {
 			STATUS="⏸"
 		fi
 
-		spotify="$(
+		spotify=$(
 			printf "^c$white^ ^b$grey^[%s %s - %s %0d:%02d/%0d:%02d]" \
 				"$STATUS" "$ARTIST" "$TRACK" $((POSITION % 3600 / 60)) \
 				$((POSITION % 60)) $((DURATION % 3600 / 60)) $((DURATION % 60))
-		)"
+		)
 	fi
 }
 
-# Modules that don't update on their own need to be run at the start for getting their initial value
+# Modules that don't update on their own need to be run at the start
+# for getting their initial value
 update_brightness
 update_volume
 update_vpn
 
 # SIGNALLING
-# trap "<function>;display" "RTMIN+n"
-trap "update_volume;display" "RTMIN"
-trap "update_brightness;display" "RTMIN+1"
-trap "update_vpn;display" "RTMIN+2"
-trap "update_record;display" "RTMIN+3"
+# trap "<function>;display       " "RTMIN+n"
+trap "update_volume;display    " "RTMIN+1"
+trap "update_brightness;display" "RTMIN+2"
+trap "update_vpn;display       " "RTMIN+3"
+trap "update_record;display    " "RTMIN+4"
 
 # To update it from external commands
 # kill -m "$(cat ~/.cache/pidofbar)"
@@ -125,14 +126,15 @@ while true; do
 	wait && {
 		# To update item every n seconds with a offset of m
 		# [ $((sec % n)) -eq m ] && update_item
+
+		# [ $((sec % 120)) -eq 0 ] && update_cpu
 		# [ $((sec % 15)) -eq 0 ] && update_spotify
 		[ $((sec % 30)) -eq 0 ] && update_wlan
 		[ $((sec % 60)) -eq 0 ] && update_battery
 		[ $((sec % 60)) -eq 0 ] && update_clock
 		[ $((sec % 60)) -eq 0 ] && update_mem
-		# [ $((sec % 120)) -eq 0 ] && update_cpu
 
-		# How often the display updates ( 5 seconds )
+		# How often the display updates? (5 seconds)
 		[ $((sec % 5)) -eq 0 ] && display
 		sec=$((sec + 1))
 	}
