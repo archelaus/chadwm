@@ -15,7 +15,7 @@ xidlehook --not-when-fullscreen --detect-sleep --not-when-audio \
 	--timer 300 "sudo systemctl suspend" "" &
 
 # for id in $(xinput list | grep "AT Translated Set 2 keyboard" | sed -E 's|.*=([0-9]+).*|\1|'); do
-# 	xinput float "$id"
+#   xinput float "$id"
 # done
 
 # https://gist.github.com/bumbummen99/fcab50dad5638399375693a70a8c17f4
