@@ -61,3 +61,5 @@ void drw_pic(Drw *drw, int x, int y, unsigned int w, unsigned int h, Picture pic
 
 /* Map functions */
 void drw_map(Drw *drw, Window win, int x, int y, unsigned int w, unsigned int h);
+
+void drw_polygon(Drw *drw, int x, int y, int ow, int oh, int sw, int sh, const XPoint *points, int npoints, int shape, int filled);

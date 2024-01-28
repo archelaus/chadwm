@@ -74,6 +74,9 @@ static const char *colors[][3]      = {
     [SchemeBtnClose]   = { red,     black,  black },
 };
 
+static const XPoint stickyicon[] = { {0,0}, {4,0}, {4,8}, {2,6}, {0,8}, {0,0} }; /* represents the icon as an array of vertices */
+static const XPoint stickyiconbb = {4,8}; /* defines the bottom right corner of the polygon's bounding box (speeds up scaling) */
+
 /* tagging */
 /* static char *tags[] = {"", "", "", "", ""}; */
 static char *tags[] = {"", "", "", "󰙯", ""};
