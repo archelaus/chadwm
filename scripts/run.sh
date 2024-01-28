@@ -1,12 +1,12 @@
 #!/bin/sh
 
-# xmodmap ~/.Xmodmap
+xmodmap ~/.Xmodmap
 setroot --restore
 xrdb merge ~/.config/x11/xresources
 
 dunst &
 greenclip daemon &
-sudo xremap ~/.config/xremap/config.yml &
+# sudo xremap ~/.config/xremap/config.yml &
 sxhkd &
 
 xidlehook --not-when-fullscreen --detect-sleep --not-when-audio \
@@ -26,8 +26,9 @@ kdeconnect-indicator &
 syncthing serve --no-browser &
 workrave &
 
-~/.local/share/virtualenvs/yt/bin/python ~/.local/src/youtube-local/server.py &
 # python -m http.server 7389 --directory ~/.local/src/_traichu/ &
+echo ~/.cache/greenclip.history | entr -np monitor &
+~/.local/share/virtualenvs/yt/bin/python ~/.local/src/youtube-local/server.py &
 
 ~/.local/src/chadwm/scripts/bar.sh &
 
