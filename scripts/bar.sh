@@ -3,11 +3,10 @@
 # ^c$var^ = fg color
 # ^b$var^ = bg color
 
-printf '%s' "$$" >~/.cache/pidofbar
+printf "%s" $$ >~/.cache/pidofbar
 sec=0
 
-# load colors
-# shellcheck disable=SC1090
+# Load colors
 . ~/.local/src/chadwm/scripts/bar_themes/gruvchad
 
 update_cpu() {
@@ -26,76 +25,79 @@ update_brightness() {
 
 update_mem() {
 	mem=$(printf "^c$blue^^b$black^  ^c$blue^^b$grey^ %s" \
-		"$(free -h | awk '/^Mem/{print $3}' | sed 's|i||g')")
+		"$(free -h | awk "/^Mem/{print \$3}" | sed "s|i||g")")
 }
 
 update_wlan() {
 	case $(cat /sys/class/net/wl*/operstate 2>/dev/null) in
-	up) wlan=$(printf "^c$black^ ^b$blue^ 󰤨 ^d^%s" " ^c$blue^Connected") ;;
-	down) wlan=$(printf "^c$black^ ^b$blue^ 󰤭 ^d^%s" " ^c$blue^Disconnected") ;;
+	up)
+		wlan=$(printf "^c$black^ ^b$blue^ 󰤨 ^d^%s" " ^c$blue^Connected")
+		;;
+	down)
+		wlan=$(printf "^c$black^ ^b$blue^ 󰤭 ^d^%s" " ^c$blue^Disconnected")
+		;;
 	esac
 }
 
 update_clock() {
-	clock=$(printf "^c$black^ ^b$darkblue^  ^c$black^^b$blue^ %s " "$(date +'%a, %H:%M')")
+	clock=$(printf "^c$black^ ^b$darkblue^  ^c$black^^b$blue^ %s " "$(date +"%a, %H:%M")")
 }
 
 update_volume() {
-	default=$(pactl info | grep "Default Sink" | cut -f3 -d" ")
-	value=$(pactl get-sink-volume @DEFAULT_SINK@ | grep -Po "\d+(?=%)" | head -1)
+	default=$(pactl info | grep "Default Sink" | cut -d" " -f3)
 
-	if pactl list sinks | grep -A 10 "$default" | grep "Mute: yes" || [ "$value" -eq 0 ]; then
+	if pactl list sinks | grep -A10 "$default" | grep -q "Mute: yes"; then
 		icon="󰖁"
 		value=" 0"
 	else
-		if [ "$value" -gt 70 ]; then
+		value=$(pactl get-sink-volume "$default" | grep -oP "\d+(?=%)" | head -1)
+		if test "$value" -gt 70; then
 			icon="󰕾"
 		else
 			icon=""
 		fi
 	fi
 
-	volume="$(printf "^c$black^^b$darkblue^ $icon ^c$white^^b$grey^ %s" "$value")"
-
+	volume=$(printf "^c$black^^b$darkblue^ $icon ^c$white^^b$grey^ %s" "$value")
 }
 
 update_vpn() {
 	vpn=""
-	nmcli con show --active | grep -q -E "tun|vpn" &&
+	nmcli con show --active | grep -qE "tun|vpn" &&
 		vpn=$(printf "^c$white^ (%s)^c$green^  " "$(curl -s ipinfo.io | jq -r .country)")
 }
 
 update_record() {
 	record=""
-	[ -f /tmp/recordingpid ] && record=$(printf "^c$green^ %s" " ")
+	test -f /tmp/recordingpid && record=$(printf "^c$green^ %s" " ")
 }
 
 update_spotify() {
 	if pgrep -x spotify >/dev/null; then
-		PLAYER="spotify"
+		player="spotify"
 	elif pgrep -x cmus >/dev/null; then
-		PLAYER="cmus"
+		player="cmus"
 	else
-		PLAYER=""
+		player=""
 	fi
 
-	if [ "$PLAYER" ]; then
-		ARTIST=$(playerctl --player $PLAYER metadata artist)
-		TRACK=$(playerctl --player $PLAYER metadata title)
-		DURATION=$(playerctl --player $PLAYER metadata mpris:length | sed 's/.\{6\}$//')
-		POSITION=$(playerctl --player $PLAYER position | sed 's/..\{6\}$//')
-		STATUS=$(playerctl --player $PLAYER status)
+	if test -n "$player"; then
+		artist=$(playerctl --player $player metadata artist)
+		duration=$(playerctl --player $player metadata mpris:length | sed -E "s|.{6}$||")
+		position=$(playerctl --player $player position | sed "s|..{6}$||")
+		status=$(playerctl --player $player status)
+		track=$(playerctl --player $player metadata title)
 
-		if [ "$STATUS" = "Playing" ]; then
-			STATUS="▶"
+		if test "$status" = "Playing"; then
+			status="▶"
 		else
-			STATUS="⏸"
+			status="⏸"
 		fi
 
 		spotify=$(
 			printf "^c$white^ ^b$grey^[%s %s - %s %0d:%02d/%0d:%02d]" \
-				"$STATUS" "$ARTIST" "$TRACK" $((POSITION % 3600 / 60)) \
-				$((POSITION % 60)) $((DURATION % 3600 / 60)) $((DURATION % 60))
+				"$status" "$artist" "$track" $((position % 3600 / 60)) \
+				$((position % 60)) $((duration % 3600 / 60)) $((duration % 60))
 		)
 	fi
 }
@@ -106,19 +108,18 @@ update_brightness
 update_volume
 update_vpn
 
-# SIGNALLING
-# trap "<function>;display       " "RTMIN+n"
-trap "update_volume;display    " "RTMIN+1"
+# SIGNALLING: trap "<function>;display" "RTMIN+n"
 trap "update_brightness;display" "RTMIN+2"
-trap "update_vpn;display       " "RTMIN+3"
 trap "update_record;display    " "RTMIN+4"
+trap "update_volume;display    " "RTMIN+1"
+trap "update_vpn;display       " "RTMIN+3"
 
 # To update it from external commands
 # kill -m "$(cat ~/.cache/pidofbar)"
 # where m = 34 + n
 
 display() {
-	xsetroot -name "  $record $vpn $volume $battery $brightness $mem $wlan $clock"
+	xsetroot -name " $record $vpn $volume $battery $brightness $mem $wlan $clock"
 }
 
 while true; do
